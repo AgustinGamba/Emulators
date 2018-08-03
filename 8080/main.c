@@ -40,7 +40,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x01:
-      printf("LXI B,D16");
+      printf("LXI B, #$%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x02:
@@ -60,7 +60,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x06:
-      printf("MVI B, D8");
+      printf("MVI B, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x07:
@@ -284,7 +284,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x3e:
-      printf("MVI A,D8");
+      printf("MVI A, #0x%02x", code[1]);
       opbytes = 2;
       break;
     case 0x3f:
@@ -816,7 +816,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 3;
       break;
     case 0xc3:
-      printf("JMP adr");
+      printf("JMP $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xc4:
@@ -1156,7 +1156,30 @@ state->pc = 0x01;
 
 state->int_enable = 0x00;*/
 
-int main() {
-  printf("Hello World\n");
+int main(int argc, char **argv) {
+  FILE *f = fopen(argv[1], "rb");
+  if (f == NULL) {
+    printf("Couldn't open %s\n", argv[1]);
+    exit(1);
+  }
+
+  // Get file size and put it in a memory buffer
+  fseek(f, 0L, SEEK_END);
+  int fsize = ftell(f);
+  fseek(f, 0L, SEEK_SET);
+
+  unsigned char *buffer = malloc(fsize);
+
+  fread(buffer, fsize, 1, f);
+  fclose(f);
+
+  int pc = 0;
+
+  printf(buffer);
+  printf(pc);
+
+  while (pc < fsize) {
+    pc += Dissasemble8080Op(buffer, pc);
+  }
   return 0;
 }
