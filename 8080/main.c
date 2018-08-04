@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // TODO: make it work
 static int parity(int x) { return 0x00; }
@@ -32,6 +33,7 @@ typedef struct State8080 {
 int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
   unsigned char *code = &codebuffer[pc];
   int opbytes = 1;
+  printf("0x%02x\n", *code);
   printf("%04x ", pc);
 
   switch (*code) {
@@ -92,7 +94,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x0e:
-      printf("MVI C,D8");
+      printf("MVI C, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x0f:
@@ -104,7 +106,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0x11:
-      printf("LXI D,D16");
+      printf("LXI D, #$%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x12:
@@ -124,7 +126,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x16:
-      printf("MVI D, D8");
+      printf("MVI D, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x17:
@@ -156,7 +158,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x1e:
-      printf("MVI E,D8");
+      printf("MVI E, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x1f:
@@ -168,11 +170,11 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x21:
-      printf("LXI H,D16");
+      printf("LXI H, #$%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x22:
-      printf("SHLD adr");
+      printf("SHLD $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x23:
@@ -188,7 +190,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x26:
-      printf("MVI H,D8");
+      printf("MVI H, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x27:
@@ -204,7 +206,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x2a:
-      printf("LHLD adr");
+      printf("LHLD $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x2b:
@@ -220,7 +222,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x2e:
-      printf("MVI L, D8");
+      printf("MVI L, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x2f:
@@ -232,11 +234,11 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x31:
-      printf("LXI SP, D16");
+      printf("LXI SP,  #$%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x32:
-      printf("STA adr");
+      printf("STA $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x33:
@@ -252,7 +254,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x36:
-      printf("MVI M,D8");
+      printf("MVI M, #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0x37:
@@ -268,7 +270,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0x3a:
-      printf("LDA adr");
+      printf("LDA $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0x3b:
@@ -812,7 +814,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xc2:
-      printf("JNZ adr");
+      printf("JNZ $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xc3:
@@ -820,7 +822,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 3;
       break;
     case 0xc4:
-      printf("CNZ adr");
+      printf("CNZ $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xc5:
@@ -828,7 +830,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xc6:
-      printf("ADI D8");
+      printf("ADI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xc7:
@@ -844,7 +846,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xca:
-      printf("JZ adr");
+      printf("JZ $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xcb:
@@ -852,15 +854,15 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0xcc:
-      printf("CZ adr");
+      printf("CZ $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xcd:
-      printf("CALL adr");
+      printf("CALL $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xce:
-      printf("ACI D8");
+      printf("ACI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xcf:
@@ -876,15 +878,15 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xd2:
-      printf("JNC adr");
+      printf("JNC #$%02x", code[1]);
       opbytes = 3;
       break;
     case 0xd3:
-      printf("OUT D8");
+      printf("OUT #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xd4:
-      printf("CNC adr");
+      printf("CNC $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xd5:
@@ -892,7 +894,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xd6:
-      printf("SUI D8");
+      printf("SUI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xd7:
@@ -908,15 +910,15 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0xda:
-      printf("JC adr");
+      printf("JC $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xdb:
-      printf("IN D8");
+      printf("IN #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xdc:
-      printf("CC adr");
+      printf("CC $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xdd:
@@ -924,7 +926,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0xde:
-      printf("SBI D8");
+      printf("SBI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xdf:
@@ -940,7 +942,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xe2:
-      printf("JPO adr");
+      printf("JPO $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xe3:
@@ -948,7 +950,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xe4:
-      printf("CPO adr");
+      printf("CPO $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xe5:
@@ -956,7 +958,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xe6:
-      printf("ANI D8");
+      printf("ANI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xe7:
@@ -972,7 +974,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xea:
-      printf("JPE adr");
+      printf("JPE $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xeb:
@@ -980,7 +982,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xec:
-      printf("CPE adr");
+      printf("CPE $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xed:
@@ -988,7 +990,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0xee:
-      printf("XRI D8");
+      printf("XRI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xef:
@@ -1004,7 +1006,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xf2:
-      printf("JP adr");
+      printf("JP $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xf3:
@@ -1012,7 +1014,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xf4:
-      printf("CP adr");
+      printf("CP $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xf5:
@@ -1020,7 +1022,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xf6:
-      printf("ORI D8");
+      printf("ORI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xf7:
@@ -1036,7 +1038,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xfa:
-      printf("JM adr");
+      printf("JM $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xfb:
@@ -1044,7 +1046,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 1;
       break;
     case 0xfc:
-      printf("CM adr");
+      printf("CM $%02x%02x", code[2], code[1]);
       opbytes = 3;
       break;
     case 0xfd:
@@ -1052,7 +1054,7 @@ int Dissasemble8080Op(unsigned char *codebuffer, int pc) {
       opbytes = 0;
       break;
     case 0xfe:
-      printf("CPI D8");
+      printf("CPI #$%02x", code[1]);
       opbytes = 2;
       break;
     case 0xff:
@@ -1175,10 +1177,11 @@ int main(int argc, char **argv) {
 
   int pc = 0;
 
-  printf(buffer);
-  printf(pc);
+  printf("buffer %p", buffer);
+  printf("\npc %d\n", pc);
 
   while (pc < fsize) {
+    getchar();
     pc += Dissasemble8080Op(buffer, pc);
   }
   return 0;
