@@ -1177,13 +1177,15 @@ void dissasemble_8080(char *file) {
 
   int pc = 0;
 
+  printf("Press Enter to jump to the next instruction");
   while (pc < fsize) {
     getchar();
     pc += dissasemble_8080_op(buffer, pc);
-    //printf("pc %d\n", pc);
+    // printf("pc %d\n", pc);
   }
 }
 
-int main(int argc, char **argv) { 
+int main(int argc, char **argv) {
   dissasemble_8080(argv[1]);
-  return 0; }
+  return 0;
+}
