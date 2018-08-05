@@ -1092,6 +1092,7 @@ void emulate_8080_op(state_8080 *state) {
       state->b = state->e;
       break;
     case 0x80: {  // ADD B
+      // Arithmetic Explanation
       // Math in higher precision to capture the carry
       uint16_t answer = (uint16_t)state->a + (uint16_t)state->b;
 
@@ -1132,13 +1133,38 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.p = parity(answer & 0xff);
       state->a = answer & 0xff;
     }
-    case 0xC6: {  // ADI byte
+    case 0xc2: {  // JNZ address
+      if (0 == state->cc.z)
+        state->pc = op_code[2] << 8 | op_code[1];
+      else
+        state->pc += 2;
+      break;
+    }
+    case 0xc3: {  // JMP address
+      state->pc = (op_code[2] << 8 | op_code[1]);
+      break;
+    }
+    case 0xc6: {  // ADI byte
       uint16_t answer = (uint16_t)state->a + (uint16_t)op_code[1];
       state->cc.z = ((answer & 0xff) == 0);
       state->cc.s = ((answer & 0x80) != 0);
       state->cc.cy = (answer > 0xff);
       state->cc.p = parity(answer & 0xff);
       state->a = answer & 0xff;
+      break;
+    }
+    case 0xc9: {
+      state->pc =
+          state->memory[state->sp] | (state->memory[state->sp + 1] << 8);
+      state->sp += 2;
+      break;
+    }
+    case 0xcd: {  // CALL address
+      uint16_t ret = state->pc + 2;
+      state->memory[state->sp - 1] = (ret >> 8) & 0xff;
+      state->memory[state->sp - 2] = (ret & 0xff);
+      state->sp = state->sp - 2;
+      state->pc = (op_code[2] << 8) | op_code[1];
       break;
     }
   }
