@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 // TODO: make it work
-static int parity(int x) { return 0x00; }
+static int parity(int value, int size) { return 0x00; }
 
 typedef struct condition_codes {
   uint8_t z : 1;   // Zero
@@ -1068,6 +1068,7 @@ int dissasemble_8080_op(unsigned char *code_buffer, int pc) {
   return op_bytes;
 }
 
+// TODO: break inside or outside {}?
 void emulate_8080_op(state_8080 *state) {
   // TODO: Test &state->memory[state->pc]
   // It should give an hex value in memory?
@@ -1078,11 +1079,24 @@ void emulate_8080_op(state_8080 *state) {
       break;
       // TODO: Test op_code[1] and op_code[2]
     case 0x01:  // LXI B, word
+    {
       state->c = op_code[1];
       state->b = op_code[2];
       state->pc += 2;
       break;
-
+    }
+    case 0x0f: {  // RRC
+      uint8_t aux = state->a;
+      state->a = ((aux & 1) << 7) | (aux >> 1);
+      state->cc.cy = (1 == (aux & 1));
+      break;
+    }
+    case 0x1f: {  // RAR
+      uint8_t aux = state->a;
+      state->a = (state->cc.cy << 7) | (aux >> 1);
+      state->cc.cy = (1 == (aux & 1));
+      break;
+    }
     case 0x41:  // MOV B,C
       state->b = state->c;
       break;
@@ -1109,7 +1123,7 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.cy = (answer > 0xff);
 
       // Parity is handled by a subroutine
-      state->cc.p = parity(answer & 0xff);
+      state->cc.p = parity(answer & 0xff, 8);
 
       state->a = answer & 0xff;
     }
@@ -1119,7 +1133,7 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.z = ((answer & 0xff) == 0);
       state->cc.s = ((answer & 0x80) != 0);
       state->cc.cy = (answer > 0xff);
-      state->cc.p = parity(answer & 0xff);
+      state->cc.p = parity(answer & 0xff, 8);
       state->a = answer & 0xff;
       break;
     }
@@ -1132,8 +1146,12 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.z = ((answer & 0xff) == 0);
       state->cc.s = ((answer & 0x80) != 0);
       state->cc.cy = (answer > 0xff);
-      state->cc.p = parity(answer & 0xff);
+      state->cc.p = parity(answer & 0xff, 8);
       state->a = answer & 0xff;
+      break;
+    }
+    case 0x2f: {  // CMA (not)
+      state->a = ~state->a;
       break;
     }
     case 0xc2: {  // JNZ address
@@ -1152,7 +1170,7 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.z = ((answer & 0xff) == 0);
       state->cc.s = ((answer & 0x80) != 0);
       state->cc.cy = (answer > 0xff);
-      state->cc.p = parity(answer & 0xff);
+      state->cc.p = parity(answer & 0xff, 8);
       state->a = answer & 0xff;
       break;
     }
@@ -1168,6 +1186,26 @@ void emulate_8080_op(state_8080 *state) {
       state->memory[state->sp - 2] = (ret & 0xff);
       state->sp = state->sp - 2;
       state->pc = (op_code[2] << 8) | op_code[1];
+      break;
+    }
+    case 0xe6: {  // ANI byte
+      uint8_t aux = state->a & op_code[1];
+      state->cc.z = (aux == 0);
+      state->cc.s = (0x80 == (aux & 0x80));
+      state->cc.p = parity(aux, 8);
+      state->cc.cy = 0;
+      state->a = aux;
+      state->pc++;
+      break;
+    }
+    case 0xfe: {  // CPI byte
+      uint8_t aux = state->a - op_code[1];
+      state->cc.z = (aux == 0);
+      state->cc.s = (0x80 == (aux & 0x80));
+      // TODO: Do I check parity here?
+      state->cc.p = parity(aux, 8);
+      state->cc.cy = (state->a < op_code[1]);
+      state->pc++;
       break;
     }
   }
