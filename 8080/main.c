@@ -1082,6 +1082,7 @@ void emulate_8080_op(state_8080 *state) {
       state->b = op_code[2];
       state->pc += 2;
       break;
+
     case 0x41:  // MOV B,C
       state->b = state->c;
       break;
@@ -1120,6 +1121,7 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.cy = (answer > 0xff);
       state->cc.p = parity(answer & 0xff);
       state->a = answer & 0xff;
+      break;
     }
       // TODO: Test memory[offset]
     case 0x86: {  // ADD M
@@ -1132,6 +1134,7 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.cy = (answer > 0xff);
       state->cc.p = parity(answer & 0xff);
       state->a = answer & 0xff;
+      break;
     }
     case 0xc2: {  // JNZ address
       if (0 == state->cc.z)
@@ -1171,19 +1174,6 @@ void emulate_8080_op(state_8080 *state) {
   state->pc += 1;
 }
 
-/*struct State8080 state;
-state->a = 0xA9;
-state->b = 0xA8;
-state->c = 0xA7;
-state->d = 0xA6;
-state->e = 0xA5;
-state->h = 0xA4;
-state->l = 0xA3;
-state->sp = 0x00;
-state->pc = 0x01;
-
-state->int_enable = 0x00;*/
-
 void dissasemble_8080(char *file) {
   FILE *f = fopen(file, "rb");
   if (f == NULL) {
@@ -1207,7 +1197,6 @@ void dissasemble_8080(char *file) {
   while (pc < fsize) {
     getchar();
     pc += dissasemble_8080_op(buffer, pc);
-    // printf("pc %d\n", pc);
   }
 }
 
