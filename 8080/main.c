@@ -1074,6 +1074,8 @@ void emulate_8080_op(state_8080 *state) {
   // It should give an hex value in memory?
   unsigned char *op_code = &state->memory[state->pc];
 
+  dissasemble_8080_op(state->memory, state->pc);
+
   switch (*op_code) {
     case 0x00:  // NOP
       break;
@@ -1157,7 +1159,7 @@ void emulate_8080_op(state_8080 *state) {
     case 0xc1: {  // POP B
       state->c = state->memory[state->sp];
       state->b = state->memory[state->sp + 1];
-      state->sp = sp + 2;
+      state->sp = state->sp + 2;
       break;
     }
     case 0xc2: {  // JNZ address
@@ -1174,7 +1176,7 @@ void emulate_8080_op(state_8080 *state) {
     case 0xc5: {  // PUSH B
       state->memory[state->sp - 1] = state->b;
       state->memory[state->sp - 2] = state->c;
-      state->sp = sp - 2;
+      state->sp = state->sp - 2;
       break;
     }
     case 0xc6: {  // ADI byte
@@ -1220,11 +1222,11 @@ void emulate_8080_op(state_8080 *state) {
       state->cc.p = (0x04 == (psw & 0x04));
       state->cc.cy = (0x05 == (psw & 0x08));
       state->cc.ac = (0x10 == (psw & 0x10));
-      state->sp = sp += 2;
+      state->sp += 2;
       break;
     }
     // TODO: Test this
-    case 0xf1: {  // PUSH PSW
+    case 0xf5: {  // PUSH PSW
       state->memory[state->sp - 1] = state->a;
       uint8_t psw = (state->cc.z | state->cc.s << 1 | state->cc.p << 2 |
                      state->cc.cy << 3 | state->cc.ac << 4);
@@ -1244,6 +1246,21 @@ void emulate_8080_op(state_8080 *state) {
     }
   }
   state->pc += 1;
+
+  printf("\tC=%d, P=%d, S=%d, Z=%d", state->cc.cy, state->cc.p, state->cc.s,
+         state->cc.z);
+
+  printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x",
+         state->a, state->b, state->c, state->d, state->e, state->h, state->l,
+         state->sp);
+}
+
+static void unimplemented_instruction(state_8080 *state) {
+  printf("Unimplemented Instruction\n");
+  state->pc--;
+  dissasemble_8080_op(state->memory, state->pc);
+  printf("\n");
+  exit(1);
 }
 
 void dissasemble_8080(char *file) {
