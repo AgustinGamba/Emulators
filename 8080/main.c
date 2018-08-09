@@ -3,7 +3,16 @@
 #include <stdlib.h>
 
 // TODO: make it work
-static int parity(int value, int size) { return 0x00; }
+static int parity(int value, int size) {
+  int i;
+  int parity = 0;
+  value = (value & ((1 << size) - 1));
+  for (i = 0; i < size; i++) {
+    if (value & 0x1) parity++;
+    value = value >> 1;
+  }
+  return (0 == (parity & 0x1));
+}
 
 typedef struct condition_codes {
   uint8_t z : 1;   // Zero
