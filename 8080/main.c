@@ -1068,6 +1068,14 @@ int dissasemble_8080_op(unsigned char *code_buffer, int pc) {
   return op_bytes;
 }
 
+static void unimplemented_instruction(state_8080 *state) {
+  printf("Unimplemented Instruction\n");
+  state->pc--;
+  dissasemble_8080_op(state->memory, state->pc);
+  printf("\n");
+  exit(1);
+}
+
 // TODO: break inside or outside {}?
 void emulate_8080_op(state_8080 *state) {
   // TODO: Test &state->memory[state->pc]
@@ -1244,6 +1252,10 @@ void emulate_8080_op(state_8080 *state) {
       state->pc++;
       break;
     }
+    default: {
+      unimplemented_instruction(state);
+      break;
+    }
   }
   state->pc += 1;
 
@@ -1253,14 +1265,6 @@ void emulate_8080_op(state_8080 *state) {
   printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x",
          state->a, state->b, state->c, state->d, state->e, state->h, state->l,
          state->sp);
-}
-
-static void unimplemented_instruction(state_8080 *state) {
-  printf("Unimplemented Instruction\n");
-  state->pc--;
-  dissasemble_8080_op(state->memory, state->pc);
-  printf("\n");
-  exit(1);
 }
 
 void dissasemble_8080(char *file) {
