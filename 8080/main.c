@@ -3,16 +3,7 @@
 #include <stdlib.h>
 
 // TODO: make it work
-static int parity(int value, int size) {
-  int i;
-  int parity = 0;
-  value = (value & ((1 << size) - 1));
-  for (i = 0; i < size; i++) {
-    if (value & 0x1) parity++;
-    value = value >> 1;
-  }
-  return (0 == (parity & 0x1));
-}
+static int parity(int value, int size) { return 0x00; }
 
 typedef struct condition_codes {
   uint8_t z : 1;   // Zero
@@ -39,7 +30,7 @@ typedef struct state_8080 {
 } state_8080;
 
 // Returns the number of bytes of op
-int dissasemble_8080_op(unsigned char *code_buffer, int pc) {
+int disassemble_8080_op(unsigned char *code_buffer, int pc) {
   unsigned char *code = &code_buffer[pc];
   int op_bytes = 1;
   printf("0x%02x\n", *code);
@@ -1080,18 +1071,18 @@ int dissasemble_8080_op(unsigned char *code_buffer, int pc) {
 static void unimplemented_instruction(state_8080 *state) {
   printf("Unimplemented Instruction\n");
   state->pc--;
-  dissasemble_8080_op(state->memory, state->pc);
+  disassemble_8080_op(state->memory, state->pc);
   printf("\n");
   exit(1);
 }
 
 // TODO: break inside or outside {}?
-void emulate_8080_op(state_8080 *state) {
+int emulate_8080_op(state_8080 *state) {
   // TODO: Test &state->memory[state->pc]
   // It should give an hex value in memory?
   unsigned char *op_code = &state->memory[state->pc];
 
-  dissasemble_8080_op(state->memory, state->pc);
+  disassemble_8080_op(state->memory, state->pc);
 
   switch (*op_code) {
     case 0x00:  // NOP
@@ -1268,15 +1259,24 @@ void emulate_8080_op(state_8080 *state) {
   }
   state->pc += 1;
 
-  printf("\tC=%d, P=%d, S=%d, Z=%d", state->cc.cy, state->cc.p, state->cc.s,
-         state->cc.z);
+  printf("\t");
+  printf("%c", state->cc.s ? 's' : '.');
+  printf("%c", state->cc.z ? 'z' : '.');
+  printf("%c", '.');
+  printf("%c", state->cc.ac ? 'a' : '.');
+  printf("%c", '.');
+  printf("%c", state->cc.p ? 'p' : '.');
+  printf("%c", '.');
+  printf("%c", state->cc.cy ? 'c' : '.');
 
   printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x",
          state->a, state->b, state->c, state->d, state->e, state->h, state->l,
          state->sp);
+
+  return 0;
 }
 
-void dissasemble_8080(char *file) {
+void disassemble_8080(char *file) {
   FILE *f = fopen(file, "rb");
   if (f == NULL) {
     printf("Couldn't open %s\n", file);
@@ -1298,11 +1298,72 @@ void dissasemble_8080(char *file) {
   printf("Press Enter to jump to the next instruction");
   while (pc < fsize) {
     getchar();
-    pc += dissasemble_8080_op(buffer, pc);
+    pc += disassemble_8080_op(buffer, pc);
   }
 }
 
+state_8080 *init_8080() {
+  state_8080 *state = calloc(1, sizeof(state_8080));
+  state->memory = malloc(0x10000);  // 16K
+  return state;
+}
+
+void read_file_into_memory_at(char *filename, state_8080 *state,
+                              uint32_t offset) {
+  FILE *f = fopen(filename, "rb");
+  if (f == NULL) {
+    printf("ERROR: Couldn't open %s\n", filename);
+    exit(1);
+  }
+
+  fseek(f, 0L, SEEK_END);
+  int fsize = ftell(f);
+  fseek(f, 0L, SEEK_SET);
+
+  uint8_t *buffer = &state->memory[offset];
+  fread(buffer, fsize, 1, f);
+  fclose(f);
+}
+
+void emulate_8080(char *file) {
+  state_8080 *state = init_8080();
+  read_file_into_memory_at("invaders/invaders.h", state, 0);
+  read_file_into_memory_at("invaders/invaders.g", state, 0x800);
+  read_file_into_memory_at("invaders/invaders.f", state, 0x1000);
+  read_file_into_memory_at("invaders/invaders.e", state, 0x1800);
+
+  int done = 0;
+
+  while (done == 0) {
+    done = emulate_8080_op(state);
+  }
+  /*  FILE *f = fopen(file, "rb");
+    if (f == NULL) {
+      printf("Couldn't open %s\n", file);
+      exit(1);
+    }
+
+    // Get file size and put it in a memory buffer
+    fseek(f, 0L, SEEK_END);
+    int fsize = ftell(f);
+    fseek(f, 0L, SEEK_SET);
+
+    unsigned char *buffer = malloc(fsize);
+
+    fread(buffer, fsize, 1, f);
+    fclose(f);
+
+    int pc = 0;
+
+    printf("Press Enter to jump to the next instruction");
+    while (pc < fsize) {
+      getchar();
+      pc += emulate_8080_op(buffer, pc);
+    }*/
+}
+
 int main(int argc, char **argv) {
-  dissasemble_8080(argv[1]);
+  emulate_8080(argv[1]);
+  // disassemble_8080(argv[1]);
   return 0;
 }
