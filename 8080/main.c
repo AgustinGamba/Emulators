@@ -33,1045 +33,1045 @@ typedef struct state_8080 {
 int disassemble_8080_op(unsigned char *code_buffer, int pc) {
   unsigned char *code = &code_buffer[pc];
   int op_bytes = 1;
-  printf("0x%02x\n", *code);
-  printf("%04x ", pc);
+  printf("OP: 0x%02x\t", *code);
+  printf("PC: $%04x\t", pc);
 
   switch (*code) {
     case 0x00:
-      printf("NOP");
+      printf("I: NOP");
       op_bytes = 1;
       break;
     case 0x01:
-      printf("LXI B, #$%02x%02x", code[2], code[1]);
+      printf("I: LXI B, #$%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x02:
-      printf("STAX B");
+      printf("I: STAX B");
       op_bytes = 1;
       break;
     case 0x03:
-      printf("INX B");
+      printf("I: INX B");
       op_bytes = 1;
       break;
     case 0x04:
-      printf("INR B");
+      printf("I: INR B");
       op_bytes = 1;
       break;
     case 0x05:
-      printf("DCR B");
+      printf("I: DCR B");
       op_bytes = 1;
       break;
     case 0x06:
-      printf("MVI B, #$%02x", code[1]);
+      printf("I: MVI B, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x07:
-      printf("RLC");
+      printf("I: RLC");
       op_bytes = 1;
       break;
     case 0x08:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0x09:
-      printf("DAD B");
+      printf("I: DAD B");
       op_bytes = 1;
       break;
     case 0x0a:
-      printf("LDAX B");
+      printf("I: LDAX B");
       op_bytes = 1;
       break;
     case 0x0b:
-      printf("DCX B");
+      printf("I: DCX B");
       op_bytes = 1;
       break;
     case 0x0c:
-      printf("INR C");
+      printf("I: INR C");
       op_bytes = 1;
       break;
     case 0x0d:
-      printf("DCR C");
+      printf("I: DCR C");
       op_bytes = 1;
       break;
     case 0x0e:
-      printf("MVI C, #$%02x", code[1]);
+      printf("I: MVI C, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x0f:
-      printf("RRC");
+      printf("I: RRC");
       op_bytes = 1;
       break;
     case 0x10:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0x11:
-      printf("LXI D, #$%02x%02x", code[2], code[1]);
+      printf("I: LXI D, #$%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x12:
-      printf("STAX D");
+      printf("I: STAX D");
       op_bytes = 1;
       break;
     case 0x13:
-      printf("INX D");
+      printf("I: INX D");
       op_bytes = 1;
       break;
     case 0x14:
-      printf("INR D");
+      printf("I: INR D");
       op_bytes = 1;
       break;
     case 0x15:
-      printf("DCR D");
+      printf("I: DCR D");
       op_bytes = 1;
       break;
     case 0x16:
-      printf("MVI D, #$%02x", code[1]);
+      printf("I: MVI D, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x17:
-      printf("RAL");
+      printf("I: RAL");
       op_bytes = 1;
       break;
     case 0x18:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0x19:
-      printf("DAD D");
+      printf("I: DAD D");
       op_bytes = 1;
       break;
     case 0x1a:
-      printf("LDAX D");
+      printf("I: LDAX D");
       op_bytes = 1;
       break;
     case 0x1b:
-      printf("DCX D");
+      printf("I: DCX D");
       op_bytes = 1;
       break;
     case 0x1c:
-      printf("INR E");
+      printf("I: INR E");
       op_bytes = 1;
       break;
     case 0x1d:
-      printf("DCR E");
+      printf("I: DCR E");
       op_bytes = 1;
       break;
     case 0x1e:
-      printf("MVI E, #$%02x", code[1]);
+      printf("I: MVI E, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x1f:
-      printf("RAR");
+      printf("I: RAR");
       op_bytes = 1;
       break;
     case 0x20:
-      printf("RIM");
+      printf("I: RIM");
       op_bytes = 1;
       break;
     case 0x21:
-      printf("LXI H, #$%02x%02x", code[2], code[1]);
+      printf("I: LXI H, #$%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x22:
-      printf("SHLD $%02x%02x", code[2], code[1]);
+      printf("I: SHLD $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x23:
-      printf("INX H");
+      printf("I: INX H");
       op_bytes = 1;
       break;
     case 0x24:
-      printf("INR H");
+      printf("I: INR H");
       op_bytes = 1;
       break;
     case 0x25:
-      printf("DCR H");
+      printf("I: DCR H");
       op_bytes = 1;
       break;
     case 0x26:
-      printf("MVI H, #$%02x", code[1]);
+      printf("I: MVI H, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x27:
-      printf("DAA");
+      printf("I: DAA");
       op_bytes = 1;
       break;
     case 0x28:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0x29:
-      printf("DAD H");
+      printf("I: DAD H");
       op_bytes = 1;
       break;
     case 0x2a:
-      printf("LHLD $%02x%02x", code[2], code[1]);
+      printf("I: LHLD $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x2b:
-      printf("DCX H");
+      printf("I: DCX H");
       op_bytes = 1;
       break;
     case 0x2c:
-      printf("INR L");
+      printf("I: INR L");
       op_bytes = 1;
       break;
     case 0x2d:
-      printf("DCR L");
+      printf("I: DCR L");
       op_bytes = 1;
       break;
     case 0x2e:
-      printf("MVI L, #$%02x", code[1]);
+      printf("I: MVI L, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x2f:
-      printf("CMA");
+      printf("I: CMA");
       op_bytes = 1;
       break;
     case 0x30:
-      printf("SIM");
+      printf("I: SIM");
       op_bytes = 1;
       break;
     case 0x31:
-      printf("LXI SP,  #$%02x%02x", code[2], code[1]);
+      printf("I: LXI SP, #$%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x32:
-      printf("STA $%02x%02x", code[2], code[1]);
+      printf("I: STA $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x33:
-      printf("INX SP");
+      printf("I: INX SP");
       op_bytes = 1;
       break;
     case 0x34:
-      printf("INR M");
+      printf("I: INR M");
       op_bytes = 1;
       break;
     case 0x35:
-      printf("DCR M");
+      printf("I: DCR M");
       op_bytes = 1;
       break;
     case 0x36:
-      printf("MVI M, #$%02x", code[1]);
+      printf("I: MVI M, #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x37:
-      printf("STC");
+      printf("I: STC");
       op_bytes = 1;
       break;
     case 0x38:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0x39:
-      printf("DAD SP");
+      printf("I: DAD SP");
       op_bytes = 1;
       break;
     case 0x3a:
-      printf("LDA $%02x%02x", code[2], code[1]);
+      printf("I: LDA $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0x3b:
-      printf("DCX SP");
+      printf("I: DCX SP");
       op_bytes = 1;
       break;
     case 0x3c:
-      printf("INR A");
+      printf("I: INR A");
       op_bytes = 1;
       break;
     case 0x3d:
-      printf("DCR A");
+      printf("I: DCR A");
       op_bytes = 1;
       break;
     case 0x3e:
-      printf("MVI A, #0x%02x", code[1]);
+      printf("I: MVI A, #0x%02x", code[1]);
       op_bytes = 2;
       break;
     case 0x3f:
-      printf("CMC");
+      printf("I: CMC");
       op_bytes = 1;
       break;
     case 0x40:
-      printf("MOV B,B");
+      printf("I: MOV B,B");
       op_bytes = 1;
       break;
     case 0x41:
-      printf("MOV B,C");
+      printf("I: MOV B,C");
       op_bytes = 1;
       break;
     case 0x42:
-      printf("MOV B,D");
+      printf("I: MOV B,D");
       op_bytes = 1;
       break;
     case 0x43:
-      printf("MOV B,E");
+      printf("I: MOV B,E");
       op_bytes = 1;
       break;
     case 0x44:
-      printf("MOV B,H");
+      printf("I: MOV B,H");
       op_bytes = 1;
       break;
     case 0x45:
-      printf("MOV B,L");
+      printf("I: MOV B,L");
       op_bytes = 1;
       break;
     case 0x46:
-      printf("MOV B,M");
+      printf("I: MOV B,M");
       op_bytes = 1;
       break;
     case 0x47:
-      printf("MOV B,A");
+      printf("I: MOV B,A");
       op_bytes = 1;
       break;
     case 0x48:
-      printf("MOV C,B");
+      printf("I: MOV C,B");
       op_bytes = 1;
       break;
     case 0x49:
-      printf("MOV C,C");
+      printf("I: MOV C,C");
       op_bytes = 1;
       break;
     case 0x4a:
-      printf("MOV C,D");
+      printf("I: MOV C,D");
       op_bytes = 1;
       break;
     case 0x4b:
-      printf("MOV C,E");
+      printf("I: MOV C,E");
       op_bytes = 1;
       break;
     case 0x4c:
-      printf("MOV C,H");
+      printf("I: MOV C,H");
       op_bytes = 1;
       break;
     case 0x4d:
-      printf("MOV C,L");
+      printf("I: MOV C,L");
       op_bytes = 1;
       break;
     case 0x4e:
-      printf("MOV C,M");
+      printf("I: MOV C,M");
       op_bytes = 1;
       break;
     case 0x4f:
-      printf("MOV C,A");
+      printf("I: MOV C,A");
       op_bytes = 1;
       break;
     case 0x50:
-      printf("MOV D,B");
+      printf("I: MOV D,B");
       op_bytes = 1;
       break;
     case 0x51:
-      printf("MOV D,C");
+      printf("I: MOV D,C");
       op_bytes = 1;
       break;
     case 0x52:
-      printf("MOV D,D");
+      printf("I: MOV D,D");
       op_bytes = 1;
       break;
     case 0x53:
-      printf("MOV D,E");
+      printf("I: MOV D,E");
       op_bytes = 1;
       break;
     case 0x54:
-      printf("MOV D,H");
+      printf("I: MOV D,H");
       op_bytes = 1;
       break;
     case 0x55:
-      printf("MOV D,L");
+      printf("I: MOV D,L");
       op_bytes = 1;
       break;
     case 0x56:
-      printf("MOV D,M");
+      printf("I: MOV D,M");
       op_bytes = 1;
       break;
     case 0x57:
-      printf("MOV D,A");
+      printf("I: MOV D,A");
       op_bytes = 1;
       break;
     case 0x58:
-      printf("MOV E,B");
+      printf("I: MOV E,B");
       op_bytes = 1;
       break;
     case 0x59:
-      printf("MOV E,C");
+      printf("I: MOV E,C");
       op_bytes = 1;
       break;
     case 0x5a:
-      printf("MOV E,D");
+      printf("I: MOV E,D");
       op_bytes = 1;
       break;
     case 0x5b:
-      printf("MOV E,E");
+      printf("I: MOV E,E");
       op_bytes = 1;
       break;
     case 0x5c:
-      printf("MOV E,H");
+      printf("I: MOV E,H");
       op_bytes = 1;
       break;
     case 0x5d:
-      printf("MOV E,L");
+      printf("I: MOV E,L");
       op_bytes = 1;
       break;
     case 0x5e:
-      printf("MOV E,M");
+      printf("I: MOV E,M");
       op_bytes = 1;
       break;
     case 0x5f:
-      printf("MOV E,A");
+      printf("I: MOV E,A");
       op_bytes = 1;
       break;
     case 0x60:
-      printf("MOV H,B");
+      printf("I: MOV H,B");
       op_bytes = 1;
       break;
     case 0x61:
-      printf("MOV H,C");
+      printf("I: MOV H,C");
       op_bytes = 1;
       break;
     case 0x62:
-      printf("MOV H,D");
+      printf("I: MOV H,D");
       op_bytes = 1;
       break;
     case 0x63:
-      printf("MOV H,E");
+      printf("I: MOV H,E");
       op_bytes = 1;
       break;
     case 0x64:
-      printf("MOV H,H");
+      printf("I: MOV H,H");
       op_bytes = 1;
       break;
     case 0x65:
-      printf("MOV H,L");
+      printf("I: MOV H,L");
       op_bytes = 1;
       break;
     case 0x66:
-      printf("MOV H,M");
+      printf("I: MOV H,M");
       op_bytes = 1;
       break;
     case 0x67:
-      printf("MOV H,A");
+      printf("I: MOV H,A");
       op_bytes = 1;
       break;
     case 0x68:
-      printf("MOV L,B");
+      printf("I: MOV L,B");
       op_bytes = 1;
       break;
     case 0x69:
-      printf("MOV L,C");
+      printf("I: MOV L,C");
       op_bytes = 1;
       break;
     case 0x6a:
-      printf("MOV L,D");
+      printf("I: MOV L,D");
       op_bytes = 1;
       break;
     case 0x6b:
-      printf("MOV L,E");
+      printf("I: MOV L,E");
       op_bytes = 1;
       break;
     case 0x6c:
-      printf("MOV L,H");
+      printf("I: MOV L,H");
       op_bytes = 1;
       break;
     case 0x6d:
-      printf("MOV L,L");
+      printf("I: MOV L,L");
       op_bytes = 1;
       break;
     case 0x6e:
-      printf("MOV L,M");
+      printf("I: MOV L,M");
       op_bytes = 1;
       break;
     case 0x6f:
-      printf("MOV L,A");
+      printf("I: MOV L,A");
       op_bytes = 1;
       break;
     case 0x70:
-      printf("MOV M,B");
+      printf("I: MOV M,B");
       op_bytes = 1;
       break;
     case 0x71:
-      printf("MOV M,C");
+      printf("I: MOV M,C");
       op_bytes = 1;
       break;
     case 0x72:
-      printf("MOV M,D");
+      printf("I: MOV M,D");
       op_bytes = 1;
       break;
     case 0x73:
-      printf("MOV M,E");
+      printf("I: MOV M,E");
       op_bytes = 1;
       break;
     case 0x74:
-      printf("MOV M,H");
+      printf("I: MOV M,H");
       op_bytes = 1;
       break;
     case 0x75:
-      printf("MOV M,L");
+      printf("I: MOV M,L");
       op_bytes = 1;
       break;
     case 0x76:
-      printf("HLT");
+      printf("I: HLT");
       op_bytes = 1;
       break;
     case 0x77:
-      printf("MOV M,A");
+      printf("I: MOV M,A");
       op_bytes = 1;
       break;
     case 0x78:
-      printf("MOV A,B");
+      printf("I: MOV A,B");
       op_bytes = 1;
       break;
     case 0x79:
-      printf("MOV A,C");
+      printf("I: MOV A,C");
       op_bytes = 1;
       break;
     case 0x7a:
-      printf("MOV A,D");
+      printf("I: MOV A,D");
       op_bytes = 1;
       break;
     case 0x7b:
-      printf("MOV A,E");
+      printf("I: MOV A,E");
       op_bytes = 1;
       break;
     case 0x7c:
-      printf("MOV A,H");
+      printf("I: MOV A,H");
       op_bytes = 1;
       break;
     case 0x7d:
-      printf("MOV A,L");
+      printf("I: MOV A,L");
       op_bytes = 1;
       break;
     case 0x7e:
-      printf("MOV A,M");
+      printf("I: MOV A,M");
       op_bytes = 1;
       break;
     case 0x7f:
-      printf("MOV A,A");
+      printf("I: MOV A,A");
       op_bytes = 1;
       break;
     case 0x80:
-      printf("ADD B");
+      printf("I: ADD B");
       op_bytes = 1;
       break;
     case 0x81:
-      printf("ADD C");
+      printf("I: ADD C");
       op_bytes = 1;
       break;
     case 0x82:
-      printf("ADD D");
+      printf("I: ADD D");
       op_bytes = 1;
       break;
     case 0x83:
-      printf("ADD E");
+      printf("I: ADD E");
       op_bytes = 1;
       break;
     case 0x84:
-      printf("ADD H");
+      printf("I: ADD H");
       op_bytes = 1;
       break;
     case 0x85:
-      printf("ADD L");
+      printf("I: ADD L");
       op_bytes = 1;
       break;
     case 0x86:
-      printf("ADD M");
+      printf("I: ADD M");
       op_bytes = 1;
       break;
     case 0x87:
-      printf("ADD A");
+      printf("I: ADD A");
       op_bytes = 1;
       break;
     case 0x88:
-      printf("ADC B");
+      printf("I: ADC B");
       op_bytes = 1;
       break;
     case 0x89:
-      printf("ADC C");
+      printf("I: ADC C");
       op_bytes = 1;
       break;
     case 0x8a:
-      printf("ADC D");
+      printf("I: ADC D");
       op_bytes = 1;
       break;
     case 0x8b:
-      printf("ADC E");
+      printf("I: ADC E");
       op_bytes = 1;
       break;
     case 0x8c:
-      printf("ADC H");
+      printf("I: ADC H");
       op_bytes = 1;
       break;
     case 0x8d:
-      printf("ADC L");
+      printf("I: ADC L");
       op_bytes = 1;
       break;
     case 0x8e:
-      printf("ADC M");
+      printf("I: ADC M");
       op_bytes = 1;
       break;
     case 0x8f:
-      printf("ADC A");
+      printf("I: ADC A");
       op_bytes = 1;
       break;
     case 0x90:
-      printf("SUB B");
+      printf("I: SUB B");
       op_bytes = 1;
       break;
     case 0x91:
-      printf("SUB C");
+      printf("I: SUB C");
       op_bytes = 1;
       break;
     case 0x92:
-      printf("SUB D");
+      printf("I: SUB D");
       op_bytes = 1;
       break;
     case 0x93:
-      printf("SUB E");
+      printf("I: SUB E");
       op_bytes = 1;
       break;
     case 0x94:
-      printf("SUB H");
+      printf("I: SUB H");
       op_bytes = 1;
       break;
     case 0x95:
-      printf("SUB L");
+      printf("I: SUB L");
       op_bytes = 1;
       break;
     case 0x96:
-      printf("SUB M");
+      printf("I: SUB M");
       op_bytes = 1;
       break;
     case 0x97:
-      printf("SUB A");
+      printf("I: SUB A");
       op_bytes = 1;
       break;
     case 0x98:
-      printf("SBB B");
+      printf("I: SBB B");
       op_bytes = 1;
       break;
     case 0x99:
-      printf("SBB C");
+      printf("I: SBB C");
       op_bytes = 1;
       break;
     case 0x9a:
-      printf("SBB D");
+      printf("I: SBB D");
       op_bytes = 1;
       break;
     case 0x9b:
-      printf("SBB E");
+      printf("I: SBB E");
       op_bytes = 1;
       break;
     case 0x9c:
-      printf("SBB H");
+      printf("I: SBB H");
       op_bytes = 1;
       break;
     case 0x9d:
-      printf("SBB L");
+      printf("I: SBB L");
       op_bytes = 1;
       break;
     case 0x9e:
-      printf("SBB M");
+      printf("I: SBB M");
       op_bytes = 1;
       break;
     case 0x9f:
-      printf("SBB A");
+      printf("I: SBB A");
       op_bytes = 1;
       break;
     case 0xa0:
-      printf("ANA B");
+      printf("I: ANA B");
       op_bytes = 1;
       break;
     case 0xa1:
-      printf("ANA C");
+      printf("I: ANA C");
       op_bytes = 1;
       break;
     case 0xa2:
-      printf("ANA D");
+      printf("I: ANA D");
       op_bytes = 1;
       break;
     case 0xa3:
-      printf("ANA E");
+      printf("I: ANA E");
       op_bytes = 1;
       break;
     case 0xa4:
-      printf("ANA H");
+      printf("I: ANA H");
       op_bytes = 1;
       break;
     case 0xa5:
-      printf("ANA L");
+      printf("I: ANA L");
       op_bytes = 1;
       break;
     case 0xa6:
-      printf("ANA M");
+      printf("I: ANA M");
       op_bytes = 1;
       break;
     case 0xa7:
-      printf("ANA A");
+      printf("I: ANA A");
       op_bytes = 1;
       break;
     case 0xa8:
-      printf("XRA B");
+      printf("I: XRA B");
       op_bytes = 1;
       break;
     case 0xa9:
-      printf("XRA C");
+      printf("I: XRA C");
       op_bytes = 1;
       break;
     case 0xaa:
-      printf("XRA D");
+      printf("I: XRA D");
       op_bytes = 1;
       break;
     case 0xab:
-      printf("XRA E");
+      printf("I: XRA E");
       op_bytes = 1;
       break;
     case 0xac:
-      printf("XRA H");
+      printf("I: XRA H");
       op_bytes = 1;
       break;
     case 0xad:
-      printf("XRA L");
+      printf("I: XRA L");
       op_bytes = 1;
       break;
     case 0xae:
-      printf("XRA M");
+      printf("I: XRA M");
       op_bytes = 1;
       break;
     case 0xaf:
-      printf("XRA A");
+      printf("I: XRA A");
       op_bytes = 1;
       break;
     case 0xb0:
-      printf("ORA B");
+      printf("I: ORA B");
       op_bytes = 1;
       break;
     case 0xb1:
-      printf("ORA C");
+      printf("I: ORA C");
       op_bytes = 1;
       break;
     case 0xb2:
-      printf("ORA D");
+      printf("I: ORA D");
       op_bytes = 1;
       break;
     case 0xb3:
-      printf("ORA E");
+      printf("I: ORA E");
       op_bytes = 1;
       break;
     case 0xb4:
-      printf("ORA H");
+      printf("I: ORA H");
       op_bytes = 1;
       break;
     case 0xb5:
-      printf("ORA L");
+      printf("I: ORA L");
       op_bytes = 1;
       break;
     case 0xb6:
-      printf("ORA M");
+      printf("I: ORA M");
       op_bytes = 1;
       break;
     case 0xb7:
-      printf("ORA A");
+      printf("I: ORA A");
       op_bytes = 1;
       break;
     case 0xb8:
-      printf("CMP B");
+      printf("I: CMP B");
       op_bytes = 1;
       break;
     case 0xb9:
-      printf("CMP C");
+      printf("I: CMP C");
       op_bytes = 1;
       break;
     case 0xba:
-      printf("CMP D");
+      printf("I: CMP D");
       op_bytes = 1;
       break;
     case 0xbb:
-      printf("CMP E");
+      printf("I: CMP E");
       op_bytes = 1;
       break;
     case 0xbc:
-      printf("CMP H");
+      printf("I: CMP H");
       op_bytes = 1;
       break;
     case 0xbd:
-      printf("CMP L");
+      printf("I: CMP L");
       op_bytes = 1;
       break;
     case 0xbe:
-      printf("CMP M");
+      printf("I: CMP M");
       op_bytes = 1;
       break;
     case 0xbf:
-      printf("CMP A");
+      printf("I: CMP A");
       op_bytes = 1;
       break;
     case 0xc0:
-      printf("RNZ");
+      printf("I: RNZ");
       op_bytes = 1;
       break;
     case 0xc1:
-      printf("POP B");
+      printf("I: POP B");
       op_bytes = 1;
       break;
     case 0xc2:
-      printf("JNZ $%02x%02x", code[2], code[1]);
+      printf("I: JNZ $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xc3:
-      printf("JMP $%02x%02x", code[2], code[1]);
+      printf("I: JMP $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xc4:
-      printf("CNZ $%02x%02x", code[2], code[1]);
+      printf("I: CNZ $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xc5:
-      printf("PUSH B");
+      printf("I: PUSH B");
       op_bytes = 1;
       break;
     case 0xc6:
-      printf("ADI #$%02x", code[1]);
+      printf("I: ADI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xc7:
-      printf("RST 0");
+      printf("I: RST 0");
       op_bytes = 1;
       break;
     case 0xc8:
-      printf("RZ");
+      printf("I: RZ");
       op_bytes = 1;
       break;
     case 0xc9:
-      printf("RET");
+      printf("I: RET");
       op_bytes = 1;
       break;
     case 0xca:
-      printf("JZ $%02x%02x", code[2], code[1]);
+      printf("I: JZ $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xcb:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0xcc:
-      printf("CZ $%02x%02x", code[2], code[1]);
+      printf("I: CZ $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xcd:
-      printf("CALL $%02x%02x", code[2], code[1]);
+      printf("I: CALL $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xce:
-      printf("ACI #$%02x", code[1]);
+      printf("I: ACI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xcf:
-      printf("RST 1");
+      printf("I: RST 1");
       op_bytes = 1;
       break;
     case 0xd0:
-      printf("RNC");
+      printf("I: RNC");
       op_bytes = 1;
       break;
     case 0xd1:
-      printf("POP D");
+      printf("I: POP D");
       op_bytes = 1;
       break;
     case 0xd2:
-      printf("JNC #$%02x", code[1]);
+      printf("I: JNC #$%02x", code[1]);
       op_bytes = 3;
       break;
     case 0xd3:
-      printf("OUT #$%02x", code[1]);
+      printf("I: OUT #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xd4:
-      printf("CNC $%02x%02x", code[2], code[1]);
+      printf("I: CNC $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xd5:
-      printf("PUSH D");
+      printf("I: PUSH D");
       op_bytes = 1;
       break;
     case 0xd6:
-      printf("SUI #$%02x", code[1]);
+      printf("I: SUI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xd7:
-      printf("RST 2");
+      printf("I: RST 2");
       op_bytes = 1;
       break;
     case 0xd8:
-      printf("RC");
+      printf("I: RC");
       op_bytes = 1;
       break;
     case 0xd9:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0xda:
-      printf("JC $%02x%02x", code[2], code[1]);
+      printf("I: JC $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xdb:
-      printf("IN #$%02x", code[1]);
+      printf("I: IN #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xdc:
-      printf("CC $%02x%02x", code[2], code[1]);
+      printf("I: CC $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xdd:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0xde:
-      printf("SBI #$%02x", code[1]);
+      printf("I: SBI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xdf:
-      printf("RST 3");
+      printf("I: RST 3");
       op_bytes = 1;
       break;
     case 0xe0:
-      printf("RPO");
+      printf("I: RPO");
       op_bytes = 1;
       break;
     case 0xe1:
-      printf("POP H");
+      printf("I: POP H");
       op_bytes = 1;
       break;
     case 0xe2:
-      printf("JPO $%02x%02x", code[2], code[1]);
+      printf("I: JPO $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xe3:
-      printf("XTHL");
+      printf("I: XTHL");
       op_bytes = 1;
       break;
     case 0xe4:
-      printf("CPO $%02x%02x", code[2], code[1]);
+      printf("I: CPO $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xe5:
-      printf("PUSH H");
+      printf("I: PUSH H");
       op_bytes = 1;
       break;
     case 0xe6:
-      printf("ANI #$%02x", code[1]);
+      printf("I: ANI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xe7:
-      printf("RST 4");
+      printf("I: RST 4");
       op_bytes = 1;
       break;
     case 0xe8:
-      printf("RPE");
+      printf("I: RPE");
       op_bytes = 1;
       break;
     case 0xe9:
-      printf("PCHL");
+      printf("I: PCHL");
       op_bytes = 1;
       break;
     case 0xea:
-      printf("JPE $%02x%02x", code[2], code[1]);
+      printf("I: JPE $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xeb:
-      printf("XCHG");
+      printf("I: XCHG");
       op_bytes = 1;
       break;
     case 0xec:
-      printf("CPE $%02x%02x", code[2], code[1]);
+      printf("I: CPE $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xed:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0xee:
-      printf("XRI #$%02x", code[1]);
+      printf("I: XRI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xef:
-      printf("RST 5");
+      printf("I: RST 5");
       op_bytes = 1;
       break;
     case 0xf0:
-      printf("RP");
+      printf("I: RP");
       op_bytes = 1;
       break;
     case 0xf1:
-      printf("POP PSW");
+      printf("I: POP PSW");
       op_bytes = 1;
       break;
     case 0xf2:
-      printf("JP $%02x%02x", code[2], code[1]);
+      printf("I: JP $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xf3:
-      printf("DI");
+      printf("I: DI");
       op_bytes = 1;
       break;
     case 0xf4:
-      printf("CP $%02x%02x", code[2], code[1]);
+      printf("I: CP $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xf5:
-      printf("PUSH PSW");
+      printf("I: PUSH PSW");
       op_bytes = 1;
       break;
     case 0xf6:
-      printf("ORI #$%02x", code[1]);
+      printf("I: ORI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xf7:
-      printf("RST 6");
+      printf("I: RST 6");
       op_bytes = 1;
       break;
     case 0xf8:
-      printf("RM");
+      printf("I: RM");
       op_bytes = 1;
       break;
     case 0xf9:
-      printf("SPHL");
+      printf("I: SPHL");
       op_bytes = 1;
       break;
     case 0xfa:
-      printf("JM $%02x%02x", code[2], code[1]);
+      printf("I: JM $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xfb:
-      printf("EI");
+      printf("I: EI");
       op_bytes = 1;
       break;
     case 0xfc:
-      printf("CM $%02x%02x", code[2], code[1]);
+      printf("I: CM $%02x%02x", code[2], code[1]);
       op_bytes = 3;
       break;
     case 0xfd:
-      printf("-");
+      printf("I: -");
       op_bytes = 0;
       break;
     case 0xfe:
-      printf("CPI #$%02x", code[1]);
+      printf("I: CPI #$%02x", code[1]);
       op_bytes = 2;
       break;
     case 0xff:
-      printf("RST 7");
+      printf("I: RST 7");
       op_bytes = 1;
       break;
   }
 
-  printf("\n");
+  printf("\n\n");
 
   return op_bytes;
 }
 
 static void unimplemented_instruction(state_8080 *state) {
-  printf("Unimplemented Instruction\n");
-  state->pc--;
+  printf("Unimplemented Instruction\t");
   disassemble_8080_op(state->memory, state->pc);
+  state->pc--;
   printf("\n");
   exit(1);
 }
@@ -1084,9 +1084,12 @@ int emulate_8080_op(state_8080 *state) {
 
   disassemble_8080_op(state->memory, state->pc);
 
+  state->pc += 1;
+
   switch (*op_code) {
-    case 0x00:  // NOP
+    case 0x00: {  // NOP
       break;
+    }
       // TODO: Test op_code[1] and op_code[2]
     case 0x01:  // LXI B, word
     {
@@ -1253,11 +1256,11 @@ int emulate_8080_op(state_8080 *state) {
       break;
     }
     default: {
+      state->pc -= 1;
       unimplemented_instruction(state);
       break;
     }
   }
-  state->pc += 1;
 
   printf("\t");
   printf("%c", state->cc.s ? 's' : '.');
@@ -1269,7 +1272,7 @@ int emulate_8080_op(state_8080 *state) {
   printf("%c", '.');
   printf("%c", state->cc.cy ? 'c' : '.');
 
-  printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x",
+  printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x\n",
          state->a, state->b, state->c, state->d, state->e, state->h, state->l,
          state->sp);
 
@@ -1337,29 +1340,6 @@ void emulate_8080(char *file) {
   while (done == 0) {
     done = emulate_8080_op(state);
   }
-  /*  FILE *f = fopen(file, "rb");
-    if (f == NULL) {
-      printf("Couldn't open %s\n", file);
-      exit(1);
-    }
-
-    // Get file size and put it in a memory buffer
-    fseek(f, 0L, SEEK_END);
-    int fsize = ftell(f);
-    fseek(f, 0L, SEEK_SET);
-
-    unsigned char *buffer = malloc(fsize);
-
-    fread(buffer, fsize, 1, f);
-    fclose(f);
-
-    int pc = 0;
-
-    printf("Press Enter to jump to the next instruction");
-    while (pc < fsize) {
-      getchar();
-      pc += emulate_8080_op(buffer, pc);
-    }*/
 }
 
 int main(int argc, char **argv) {
