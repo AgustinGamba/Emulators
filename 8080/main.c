@@ -1063,7 +1063,7 @@ int disassemble_8080_op(unsigned char *code_buffer, int pc) {
       break;
   }
 
-  printf("\n\n");
+  printf("\n");
 
   return op_bytes;
 }
@@ -1098,16 +1098,35 @@ int emulate_8080_op(state_8080 *state) {
       state->pc += 2;
       break;
     }
+    case 0x05: {  // DCR B
+      uint8_t result = state->b - 1;
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
+      state->cc.p = parity(result, 8);
+      state->b = result;
+      break;
+    }
+    case 0x06: {  // MVI B byte
+      state->b = op_code[1];
+      state->pc++;
+      break;
+    }
     case 0x0f: {  // RRC
-      uint8_t aux = state->a;
-      state->a = ((aux & 1) << 7) | (aux >> 1);
-      state->cc.cy = (1 == (aux & 1));
+      uint8_t result = state->a;
+      state->a = ((result & 1) << 7) | (result >> 1);
+      state->cc.cy = (1 == (result & 1));
       break;
     }
     case 0x1f: {  // RAR
-      uint8_t aux = state->a;
-      state->a = (state->cc.cy << 7) | (aux >> 1);
-      state->cc.cy = (1 == (aux & 1));
+      uint8_t result = state->a;
+      state->a = (state->cc.cy << 7) | (result >> 1);
+      state->cc.cy = (1 == (result & 1));
+      break;
+    }
+    case 0x31: {  // LXI SP, word
+                  // SP.hi <- byte 3, SP.lo <- byte 2
+      state->sp = (op_code[2] << 8) | op_code[1];
+      state->pc += 2;
       break;
     }
     case 0x41:  // MOV B,C
@@ -1214,12 +1233,12 @@ int emulate_8080_op(state_8080 *state) {
       break;
     }
     case 0xe6: {  // ANI byte
-      uint8_t aux = state->a & op_code[1];
-      state->cc.z = (aux == 0);
-      state->cc.s = (0x80 == (aux & 0x80));
-      state->cc.p = parity(aux, 8);
+      uint8_t result = state->a & op_code[1];
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
+      state->cc.p = parity(result, 8);
       state->cc.cy = 0;
-      state->a = aux;
+      state->a = result;
       state->pc++;
       break;
     }
@@ -1246,11 +1265,11 @@ int emulate_8080_op(state_8080 *state) {
       break;
     }
     case 0xfe: {  // CPI byte
-      uint8_t aux = state->a - op_code[1];
-      state->cc.z = (aux == 0);
-      state->cc.s = (0x80 == (aux & 0x80));
+      uint8_t result = state->a - op_code[1];
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
       // TODO: Do I check parity here?
-      state->cc.p = parity(aux, 8);
+      state->cc.p = parity(result, 8);
       state->cc.cy = (state->a < op_code[1]);
       state->pc++;
       break;
@@ -1272,9 +1291,10 @@ int emulate_8080_op(state_8080 *state) {
   printf("%c", '.');
   printf("%c", state->cc.cy ? 'c' : '.');
 
-  printf("\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x\n",
-         state->a, state->b, state->c, state->d, state->e, state->h, state->l,
-         state->sp);
+  printf(
+      "\tA $%02x B $%02x C $%02x D $%02x E $%02x H $%02x L $%02x SP $%04x\n\n",
+      state->a, state->b, state->c, state->d, state->e, state->h, state->l,
+      state->sp);
 
   return 0;
 }
