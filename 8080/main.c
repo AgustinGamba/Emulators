@@ -1076,6 +1076,7 @@ static void unimplemented_instruction(state_8080 *state) {
   exit(1);
 }
 
+// TODO: Create functions for arith-logic-etc
 // TODO: break inside or outside {}?
 int emulate_8080_op(state_8080 *state) {
   // TODO: Test &state->memory[state->pc]
@@ -1111,10 +1112,60 @@ int emulate_8080_op(state_8080 *state) {
       state->pc++;
       break;
     }
+    // TODO: Test this case
+    case 0x09: {  // DAD B
+      uint32_t hl = (state->h << 8) | state->l;
+      uint32_t bc = (state->b << 8) | state->c;
+      uint32_t result = hl + bc;
+      state->h = (result & 0xff00) >> 8;
+      state->l = (result & 0xff);
+      state->cc.cy = ((result & 0xffff0000) > 0);
+      break;
+    }
+    case 0x0d: {  // DCR C
+      uint8_t result = state->c - 1;
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
+      state->cc.p = parity(result, 8);
+      state->c = result;
+      break;
+    }
+    case 0x0e: {  // MVI C byte
+      state->c = op_code[1];
+      state->pc++;
+      break;
+    }
     case 0x0f: {  // RRC
       uint8_t result = state->a;
       state->a = ((result & 1) << 7) | (result >> 1);
       state->cc.cy = (1 == (result & 1));
+      break;
+    }
+    case 0x11: {  // LXI D word
+      state->e = op_code[1];
+      state->d = op_code[2];
+      state->pc += 2;
+      break;
+    }
+    case 0x13: {  // INX D
+      state->e++;
+      if (state->e == 0) {
+        state->d++;
+      }
+      break;
+    }
+    case 0x19: {  // DAD D
+      uint32_t hl = (state->h << 8) | state->l;
+      uint32_t de = (state->d << 8) | state->e;
+      uint32_t result = hl + de;
+      state->h = (result & 0xff00) >> 8;
+      state->l = (result & 0xff);
+      state->cc.cy = ((result & 0xffff0000) > 0);
+      break;
+    }
+    case 0x1a: {  // LDAX D
+      uint16_t offset = (state->d << 8) | state->e;
+      state->a = state->memory[offset];
       break;
     }
     case 0x1f: {  // RAR
@@ -1123,10 +1174,59 @@ int emulate_8080_op(state_8080 *state) {
       state->cc.cy = (1 == (result & 1));
       break;
     }
-    case 0x31: {  // LXI SP, word
+    case 0x21: {  //	LXI H word
+      state->l = op_code[1];
+      state->h = op_code[2];
+      state->pc += 2;
+      break;
+    }
+    case 0x23: {  // INX H
+      state->l++;
+      if (state->l == 0) {
+        state->h++;
+      }
+      break;
+    }
+    case 0x26: {  // MVI H byte
+      state->h = op_code[1];
+      state->pc++;
+      break;
+    }
+    case 0x29: {  // DAD H
+      uint32_t hl = (state->h << 8) | state->l;
+      uint32_t result = hl + hl;
+      state->h = (result & 0xff00) >> 8;
+      state->l = (result & 0xff);
+      state->cc.cy = ((result & 0xffff0000) > 0);
+      break;
+    }
+    case 0x31: {  // LXI SP word
                   // SP.hi <- byte 3, SP.lo <- byte 2
       state->sp = (op_code[2] << 8) | op_code[1];
       state->pc += 2;
+      break;
+    }
+    case 0x32: {  // STA address
+      uint16_t offset = (op_code[2] << 8) | (op_code[1]);
+      state->memory[offset] = state->a;
+      state->pc += 2;
+      break;
+    }
+    case 0x36: {  // MVI M byte
+      uint16_t offset = (state->h << 8) | state->l;
+      state->memory[offset] = op_code[1];
+      state->pc++;
+      break;
+    }
+    case 0x3a: {  // LDA address
+      uint16_t offset = (op_code[2] << 8) | (op_code[1]);
+      state->a = state->memory[offset];
+      state->pc += 2;
+      break;
+    }
+    case 0x3e: {  // MVI A byte
+      state->a = op_code[1];
+      state->pc++;
       break;
     }
     case 0x41:  // MOV B,C
@@ -1138,6 +1238,43 @@ int emulate_8080_op(state_8080 *state) {
     case 0x43:  // MOV B,E
       state->b = state->e;
       break;
+    case 0x56: {  // MOV D,M
+      uint16_t offset = (state->h << 8) | (state->l);
+      state->d = state->memory[offset];
+      break;
+    }
+    case 0x5e: {  // MOV E,M
+      uint16_t offset = (state->h << 8) | (state->l);
+      state->e = state->memory[offset];
+      break;
+    }
+    case 0x66: {  // MOV H,M
+      uint16_t offset = (state->h << 8) | (state->l);
+      state->h = state->memory[offset];
+      break;
+    }
+    case 0x6f:  // MOV L,A
+      state->l = state->a;
+      break;
+    case 0x77: {  // MOV M,A
+      uint16_t offset = (state->h << 8) | (state->l);
+      state->memory[offset] = state->a;
+      break;
+    }
+    case 0x7a:  // MOV A,D
+      state->a = state->d;
+      break;
+    case 0x7b:  // MOV A,E
+      state->a = state->e;
+      break;
+    case 0x7c:  // MOV A,H
+      state->a = state->h;
+      break;
+    case 0x7e: {  //	MOV A,M
+      uint16_t offset = (state->h << 8) | (state->l);
+      state->a = state->memory[offset];
+      break;
+    }
     case 0x80: {  // ADD B
       // Arithmetic Explanation
       // Math in higher precision to capture the carry
@@ -1186,6 +1323,24 @@ int emulate_8080_op(state_8080 *state) {
       state->a = ~state->a;
       break;
     }
+    case 0xa7: {  //	ANA A
+      uint8_t result = state->a & state->a;
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
+      state->cc.p = parity(result, 8);
+      state->cc.cy = (state->a < op_code[1]);
+      state->a = result;
+      break;
+    }
+    case 0xaf: {  //	XRA A
+      uint8_t result = state->a ^ state->a;
+      state->cc.z = (result == 0);
+      state->cc.s = (0x80 == (result & 0x80));
+      state->cc.p = parity(result, 8);
+      state->cc.cy = (state->a < op_code[1]);
+      state->a = result;
+      break;
+    }
     case 0xc1: {  // POP B
       state->c = state->memory[state->sp];
       state->b = state->memory[state->sp + 1];
@@ -1232,6 +1387,35 @@ int emulate_8080_op(state_8080 *state) {
       state->pc = (op_code[2] << 8) | op_code[1];
       break;
     }
+    case 0xd1: {  // POP D
+      state->e = state->memory[state->sp];
+      state->d = state->memory[state->sp + 1];
+      state->sp = state->sp + 2;
+      break;
+    }
+    case 0xd3: {  // OUT byte
+      // TODO: Learn what to do here
+      state->pc++;
+      break;
+    }
+    case 0xd5: {  // PUSH D
+      state->memory[state->sp - 1] = state->d;
+      state->memory[state->sp - 2] = state->e;
+      state->sp = state->sp - 2;
+      break;
+    }
+    case 0xe1: {  // POP H
+      state->l = state->memory[state->sp];
+      state->h = state->memory[state->sp + 1];
+      state->sp = state->sp + 2;
+      break;
+    }
+    case 0xe5: {  // PUSH H
+      state->memory[state->sp - 1] = state->h;
+      state->memory[state->sp - 2] = state->l;
+      state->sp = state->sp - 2;
+      break;
+    }
     case 0xe6: {  // ANI byte
       uint8_t result = state->a & op_code[1];
       state->cc.z = (result == 0);
@@ -1240,6 +1424,15 @@ int emulate_8080_op(state_8080 *state) {
       state->cc.cy = 0;
       state->a = result;
       state->pc++;
+      break;
+    }
+    case 0xeb: {  // XCHG
+      uint8_t temporal1 = state->d;
+      uint8_t temporal2 = state->e;
+      state->d = state->h;
+      state->e = state->l;
+      state->h = temporal1;
+      state->l = temporal2;
       break;
     }
     // TODO: Test this
