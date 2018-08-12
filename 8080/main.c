@@ -1330,10 +1330,7 @@ void read_file_into_memory_at(char *filename, state_8080 *state,
 
 void emulate_8080(char *file) {
   state_8080 *state = init_8080();
-  read_file_into_memory_at("invaders/invaders.h", state, 0);
-  read_file_into_memory_at("invaders/invaders.g", state, 0x800);
-  read_file_into_memory_at("invaders/invaders.f", state, 0x1000);
-  read_file_into_memory_at("invaders/invaders.e", state, 0x1800);
+  read_file_into_memory_at("Invaders/invaders", state, 0);
 
   int done = 0;
 
