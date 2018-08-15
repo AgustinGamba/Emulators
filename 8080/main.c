@@ -1457,6 +1457,10 @@ int emulate_8080_op(state_8080 *state) {
       state->sp = state->sp - 2;
       break;
     }
+    case 0xfb: {  // EI
+      state->int_enable = 1;
+      break;
+    }
     case 0xfe: {  // CPI byte
       uint8_t result = state->a - op_code[1];
       state->cc.z = (result == 0);
